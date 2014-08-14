@@ -22,10 +22,13 @@ int main()
     // adding an element to the vector
     v.push_back(5);
 
+    
     printVector(v);
 
     //vector does not provide range checking...
     //so invalid use of the index will result 
     //in nasty runtime out_of_range exceptions.
+      
+
 
 }
