@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
+#include <typeinfo>
+#include <list>
 
 template<typename T>
 void printVector(const std::vector<T>& v) 
@@ -30,10 +33,36 @@ std::vector<typename std::vector<T>::iterator> findValues(std::vector<T>& v,  T 
     return retValue;
 } 
 
+// below is meta programming magic.
+// we take a variable of type T 
+// and then determine if the iterator of type T supports 
+// random access. if it does we could use a differen algorithm 
+// using tag dispatch. 
+template<typename T>
+void printIteratorType(T t)
+{
+    typedef std::iterator_traits<T> traits;
+    if(typeid(typename traits::iterator_category) == typeid(std::random_access_iterator_tag))
+    {
+	std::cout << "Iterator of  " << typeid(T).name() << " is a random access iterator." << std::endl;
+    }
+    else
+    {
+	std::cout << "Iterator of  " << typeid(T).name() << " is a NOT random access iterator." << std::endl;
+    }    
+}
+
 int main()
 {
     // defining a vector with a initializer list
     std::vector<int> v = {1, 2, 3, 4, 1, 1 };
+
+    // also we can actually check the type of the iterator
+    // these are useful for metaprogramming and tag dispatch   
+    int i = 2;
+    printIteratorType(v.begin());
+
+    //printIteratorType(std::list<int>::iterator);
     
     printVector(v);
  
