@@ -4,6 +4,8 @@
 #include <iterator>
 #include <typeinfo>
 #include <list>
+#include <exception>
+#
 
 template<typename T>
 void printVector(const std::vector<T>& v) 
@@ -11,7 +13,7 @@ void printVector(const std::vector<T>& v)
    // has the standard iterators.
     for(const T& i : v)
     {
-	std::cout << i;
+	std::cout << i << ", ";
     }
     std::cout << std::endl;
 }
@@ -52,10 +54,68 @@ void printIteratorType(T t)
     }    
 }
 
+// finally some decltype magic.
+template<typename T, typename U>
+auto operator+(const std::vector<T>& a, const std::vector<U>& b) -> std::vector<decltype(T{} + U{})>
+{
+    if(a.size() != b.size())
+    {	
+	throw std::invalid_argument("vectors have different lengths.");
+    }
+    std::vector<decltype(T{} + U{})> res;
+    for(int i =0; i < a.size(); i++)
+    {
+	res.push_back(a[i] + b[i]);
+    }
+
+    return res;
+    
+}
+
+// here are some examples of rvalue usage.
+// first an old style swap
+template<typename T>
+void swap(T& a, T& b)
+{
+    T temp {a};
+    a = b;
+    b = temp;
+}
+
+// but the above creates an extra copy temp which might be expensive.
+// it is better if it is moved.
+template<typename T>
+void better_swap(T& a, T& b)
+{
+    // creating T by moving the contents of a
+    // by creating a static_cast to a rvalue reference.
+    T tmp {static_cast<T&&>(a)}; 
+
+    a = static_cast<T&&>(b);
+
+    b = static_cast<T&&>(tmp);
+}
+
+// finally, all the static casts might be avoided by using std::move
+template<typename T>
+void even_better_swap(T& a, T& b)
+{
+    T tmp = std::move(a);
+
+    a = std::move(b);
+
+    b = std::move(tmp);
+}
+
 int main()
 {
     // defining a vector with a initializer list
     std::vector<int> v = {1, 2, 3, 4, 1, 1 };
+    std::vector<double> dv = { 1.0, 2.7, 3.5, 4.0, 1.0, 1.0 };
+
+    auto result = v + dv;
+
+    printVector(result);
 
     // also we can actually check the type of the iterator
     // these are useful for metaprogramming and tag dispatch   
@@ -88,6 +148,16 @@ int main()
     // once again.
     std::for_each(v.begin(), v.end(), [](int i) { std::cout << i; });
 
+
+    std::vector<int> a = {1, 2, 3, 4, 1, 1 };
+    std::vector<int> b = {2, 3, 4, 5, 2, 3 };
+    std::cout << "before swapping..." << std::endl;
+    printVector(a);
+    printVector(b);
+    even_better_swap(a, b);
+    std::cout << "after swapping..." << std::endl;
+    printVector(a);
+    printVector(b);
 
 
     //vector does not provide range checking...
