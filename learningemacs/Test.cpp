@@ -2,6 +2,12 @@
 #include <stdexcept>
 #include "Vector.h"
 
+// now My_Code can be accessed as MyVectorCode too.
+namespace MyVectorCode = My_code;
+
+using MyVectorCode::Vector;
+using MyVectorCode::print_vector;
+
 const int j = 10;
 
 // this is a new c++ 11 feature. Constexpr means that 
@@ -56,26 +62,26 @@ void vector_test2()
 {
     try
     {
-	My_code::Vector v2(4);
+	Vector v2(4);
 	for(int i = 0 ; i < v2.size(); i++)
 	{
 	    v2[i] = i * 2;
 	}
-	My_code::print_vector(v2);
+	print_vector(v2);
 	// clear it out and then print it
-	My_code::clear_vector(v2);
-	My_code::print_vector(v2);
+	clear_vector(v2);
+	print_vector(v2);
 	// create a vector with a initializer
-	My_code::Vector v3 = { 11, 99, 200 };
-	My_code::print_vector(v3);
+	Vector v3 = { 11, 99, 200 };
+	print_vector(v3);
 
 	// now lets test a copy.
-	My_code::Vector v4 = v2;
-	My_code::print_vector(v4);
+	Vector v4 = v2;
+	print_vector(v4);
 	// now test a move
 	v4 = std::move(v3);
-	My_code::print_vector(v4);
-	My_code::print_vector(v3);
+	print_vector(v4);
+	print_vector(v3);
 	
 	
 	

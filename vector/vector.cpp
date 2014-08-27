@@ -5,7 +5,10 @@
 #include <typeinfo>
 #include <list>
 #include <exception>
-#
+
+// we tire of typing std::vector. so just bring in that one 
+// name. this is much cleaner then using namespace std;
+using std::vector;
 
 template<typename T>
 void printVector(const std::vector<T>& v) 
@@ -22,9 +25,9 @@ void printVector(const std::vector<T>& v)
 // notice the use of the vector type in the value instead of another
 // type. It returns an iterator. all algortihms work on iterators.
 template<typename T>
-std::vector<typename std::vector<T>::iterator> findValues(std::vector<T>& v,  T value)
+vector<typename vector<T>::iterator> findValues(vector<T>& v,  T value)
 {
-    std::vector<typename std::vector<T>::iterator> retValue;
+    vector<typename vector<T>::iterator> retValue;
     for(auto p = v.begin(); p != v.end(); p++)
     {
 	if(*p == value)
