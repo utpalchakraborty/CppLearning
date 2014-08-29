@@ -1,6 +1,8 @@
 #include <iostream>
 #include <initializer_list>
 
+using std::string;
+
 // anonymous namespace. That means all that is defined here is only accessible to this translation unit.
 namespace
 {
@@ -23,6 +25,9 @@ namespace
     public:
 	// the constructor is marked explicit so no implicit conversions are not allowed.
 	explicit Date(int day = 0, int month = 0, int year = 0) : d {day}, m {month}, y {year}, z {0} {}
+
+	// another constructor with invocation to another constructor
+	explicit Date(string day, string month, string year) : Date { std::stoi(day), std::stoi(month), std::stoi(year) } {}
 
 	// the simple modifiers return a reference to this object.
 	// so they can be chained.
